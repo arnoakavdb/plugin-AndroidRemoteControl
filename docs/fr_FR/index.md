@@ -1,46 +1,38 @@
-# Plugin AndroidRemoteControl pour Jeedom
+Description 
+===
 
-<img src="plugin_info/AndroidRemoteControl_icon.png" align="right" height="160" width="140">
+Plugin permattant de piloter les terminaux android (TV, Shield, freebox mini 4k, smartphone, etc..)
 
-Piloter les terminaux android (TV, Shield, freebox mini 4k, etc..)
-
-
-
-
-### Market
+Market
+===
 
 Retrouvez le sur le Market Jeedom [ici](https://www.jeedom.com/market/index.php?v=d&p=market&type=plugin&&name=AndroidRemoteControl)
 
+Prévisualisation 
+===
 
-### Documentation
+<img src="../assets/images/AndroidRemoteControl_screenshot1.png" align="center">
 
-Vous trouverez la documentation [ici](https://github.com/Jeedom-Plugins-Extra/AndroidRemoteControl/blob/stable/doc/fr_FR/index.asciidoc)
-
-
-### Prévisualisation
-
-<img src="docs/assets/images/AndroidRemoteControl_screenshot1.png" align="center">
-
-
-### Forum
+Forum
+===
 
 Lien vers le forum [ici](https://www.jeedom.com/forum/viewtopic.php?f=142&t=34154)
 
-
-### Chatroom
+Chatroom
+===
 
 Lien vers le chat [ici](https://gitter.im/Jeedom-Plugins-Extra/plugin-AndroidRemoteControl)
 
+Fonction disponibles
+===
 
-### Fonctions disponibles
-
-Infos :
+### Infos :
 * Etat (allumé/Eteint)
 * App encours
 * résolution
 * nom de l'appareil
 
-Actions :
+### Actions :
 * home, back
 * power on, power off
 * volume+, volume-, volume xx
