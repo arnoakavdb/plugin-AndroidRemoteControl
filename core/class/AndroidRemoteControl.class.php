@@ -116,7 +116,7 @@ class AndroidRemoteControl extends eqLogic {
       if ($sudo != "0") {
       }
       if (substr(shell_exec("sudo adb shell 'pm list packages -f' | sed -e 's/.*=//' |grep rja"),0 , -1) != "com.rja.utility") {
-        shell_exec("sudo adb install /var/www/html/plugins/AndroidRemoteControl/3rdparty/ShowToastMessage_NoDrawerIcon.apk");
+        shell_exec($sudo_prefix."adb install /var/www/html/plugins/AndroidRemoteControl/3rdparty/ShowToastMessage_NoDrawerIcon.apk");
       }
       if ($this->getIsEnable()) {
   			$cmd = '/bin/bash ' .dirname(__FILE__) . '/../../3rdparty/create.sh ' . $this->getConfiguration('name') . ' ' . $this->getConfiguration('ip_address');
