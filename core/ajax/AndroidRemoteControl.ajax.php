@@ -39,6 +39,14 @@ try {
       AndroidRemoteControl::statusAndroidRemoteControl(init('serviceName'));
         ajax::success();
     }
+    if (init('action') == 'connectAndroidRemoteControl') {
+      AndroidRemoteControl::connectAndroidRemoteControl(init('ip_address'));
+        ajax::success();
+    }
+    if (init('action') == 'disconnectAndroidRemoteControl') {
+      AndroidRemoteControl::disconnectAndroidRemoteControl(init('ip_address'));
+        ajax::success();
+    }
 
     throw new Exception(__('Aucune méthode correspondante à : ', __FILE__) . init('action'));
     /*     * *********Catch exeption*************** */

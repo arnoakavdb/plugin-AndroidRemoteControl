@@ -72,6 +72,19 @@ class AndroidRemoteControl extends eqLogic {
   		$cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_status') . ' 2>&1 &';
   		exec($cmd);
   	}
+  	public static function connectAndroidRemoteControl($ip_address) {
+  		log::remove('AndroidRemoteControl_connect');
+  		$cmd = '/bin/bash ' .dirname(__FILE__) . '/../../3rdparty/connect.sh ' . $ip_address;
+  		$cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_connect') . ' 2>&1 &';
+  		exec($cmd);
+  	}
+
+  	public static function disconnectAndroidRemoteControl($ip_address) {
+  		log::remove('AndroidRemoteControl_disconnect');
+  		$cmd = '/bin/bash ' .dirname(__FILE__) . '/../../3rdparty/disconnect.sh ' . $ip_address;
+  		$cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_disconnect') . ' 2>&1 &';
+  		exec($cmd);
+  	}
 
 
     /*     * *********************Méthodes d'instance************************* */
@@ -87,10 +100,14 @@ class AndroidRemoteControl extends eqLogic {
     public function preSave() {
       if (!$this->getConfiguration('lastName') == ''){
   			if ($this->getConfiguration('name') !== $this->getConfiguration('lastName')) {
+          $sudo = exec("\$EUID");
+          if ($sudo != "0") {
+            $sudo_prefix="sudo ";
+          }
   				exec('echo Remove Service Name : ' . $this->getConfiguration('lastName') . ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &');
   				$cmd = '/bin/bash ' .dirname(__FILE__) . '/../../3rdparty/delete.sh ' . $this->getConfiguration('lastName');
   				$cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &';
-  				exec($cmd);
+  				exec($sudo_prefix.$cmd);
   				sleep(2);
   				$this->setConfiguration('lastName',$this->getConfiguration('name'));
   				exec('echo Setting Last Service Name : ' . $this->getConfiguration('lastName') . ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &');
@@ -102,19 +119,19 @@ class AndroidRemoteControl extends eqLogic {
 
     public function postSave() {
 
-      // foreach (eqLogic::byType('AndroidRemoteControl') as $AndroidRemoteControl) {
-      //     $AndroidRemoteControl->getInformations();
-      // }
+      $sudo = exec("\$EUID");
+      if ($sudo != "0") {
+        $sudo_prefix="sudo ";
+      }
       if ($this->getIsEnable()) {
-
-  			$cmd = '/bin/bash ' .dirname(__FILE__) . '/../../3rdparty/create.sh ' . $this->getConfiguration('name') . ' ' . $this->getConfiguration('ip');
+  			$cmd = '/bin/bash ' .dirname(__FILE__) . '/../../3rdparty/create.sh ' . $this->getConfiguration('name') . ' ' . $this->getConfiguration('ip_address');
   			$cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_create') . ' 2>&1 &';
-  			exec('echo Create/Update Service Name : ' . $this->getConfiguration('name') . ' IP : ' . $this->getConfiguration('ip') . ' >> ' . log::getPathToLog('AndroidRemoteControl_create') . ' 2>&1 &');
-  			exec($cmd);
+  			exec('echo Create/Update Service Name : ' . $this->getConfiguration('name') . ' IP : ' . $this->getConfiguration('ip_address') . ' >> ' . log::getPathToLog('AndroidRemoteControl_create') . ' 2>&1 &');
+  			exec($sudo_prefix.$cmd);
   		} else {
   			$cmd = '/bin/bash ' .dirname(__FILE__) . '/../../3rdparty/stop.sh ' . $this->getConfiguration('name');
   			$cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_status') . ' 2>&1 &';
-  			exec($cmd);
+  			exec($sudo_prefix.$cmd);
   		}
 
 /********************************Info***************************/
@@ -370,12 +387,12 @@ class AndroidRemoteControl extends eqLogic {
         $cmd->save();
 
 
-        $infos = $this->getInfo();
+        // $infos = $this->getInfo();
         $this->updateInfo();
     }
 
     public function preUpdate() {
-        if ($this->getConfiguration('ip') == '') {
+        if ($this->getConfiguration('ip_address') == '') {
             throw new Exception(__('L\'adresse IP doit être renseignée', __FILE__));
         }
     		if ($this->getConfiguration('name') === '') {
@@ -396,10 +413,15 @@ class AndroidRemoteControl extends eqLogic {
     }
 
   	public function preRemove() {
+
+      $sudo = exec("\$EUID");
+      if ($sudo != "0") {
+        $sudo_prefix="sudo ";
+      }
   		$cmd = '/bin/bash ' .dirname(__FILE__) . '/../../3rdparty/delete.sh ' . $this->getConfiguration('name');
   		$cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &';
   		exec('echo Delete Service Name : ' . $this->getConfiguration('name') . ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &');
-  		exec($cmd);
+  		exec($sudo_prefix.$cmd);
   	}
 
     public function postRemove() {
@@ -427,16 +449,13 @@ class AndroidRemoteControl extends eqLogic {
      public function getInformations() {
 
        foreach ($this->getCmd() as $cmd) {
-           $ip = $this->getConfiguration('ip');
+           $ip = $this->getConfiguration('ip_address');
            $name = $this->getConfiguration('name');
            $sudo = exec("\$EUID");
-
-           if ($sudo == "0") {
-             $state = exec("/etc/init.d/AndroidRemoteControl-service-$name status");
-           } else {
-             $state = exec("sudo /etc/init.d/AndroidRemoteControl-service-$name status");
+           if ($sudo != "0") {
+             $sudo_prefix="sudo ";
            }
-
+           $state = exec($sudo_prefix."/etc/init.d/AndroidRemoteControl-service-$name status");
            $cmd->event($state);
        }
        if (is_object($state)) {
@@ -447,13 +466,16 @@ class AndroidRemoteControl extends eqLogic {
      }
     public function getInfo() {
         $this->checkAndroidRemoteControlStatus();
-
-        $power_state=substr(shell_exec("sudo adb shell dumpsys power -h | grep \"Display Power\" | cut -c22-"),0 , -1);
-        $encours=substr(shell_exec("sudo adb shell dumpsys window windows | grep -E 'mFocusedApp'| cut -d / -f 1 | cut -d \" \" -f 7"), 0, -1);
-      	$version=substr(shell_exec("sudo adb shell getprop ro.build.version.release"), 0, -1);
-        $name=substr(shell_exec("sudo adb shell getprop ro.product.model"), 0, -1);
-        $type=substr(shell_exec("sudo adb shell getprop ro.build.characteristics"), 0, -1);
-        $resolution=substr(shell_exec("sudo adb shell getprop persist.sys.display.resolution"), 0, -1);
+        $sudo = exec("\$EUID");
+        if ($sudo != "0") {
+          $sudo_prefix="sudo ";
+        }
+        $power_state=substr(shell_exec($sudo_prefix."adb shell dumpsys power -h | grep \"Display Power\" | cut -c22-"),0 , -1);
+        $encours=substr(shell_exec($sudo_prefix."adb shell dumpsys window windows | grep -E 'mFocusedApp'| cut -d / -f 1 | cut -d \" \" -f 7"), 0, -1);
+      	$version=substr(shell_exec($sudo_prefix."adb shell getprop ro.build.version.release"), 0, -1);
+        $name=substr(shell_exec($sudo_prefix."adb shell getprop ro.product.model"), 0, -1);
+        $type=substr(shell_exec($sudo_prefix."adb shell getprop ro.build.characteristics"), 0, -1);
+        $resolution=substr(shell_exec($sudo_prefix."adb shell getprop persist.sys.display.resolution"), 0, -1);
 
         return array('power_state' => $power_state, 'encours' => $encours, 'version' => $version, 'name' => $name, 'type' => $type, 'resolution' => $resolution);
     }
@@ -528,7 +550,11 @@ class AndroidRemoteControl extends eqLogic {
     }
 
     public function checkAndroidRemoteControlStatus() {
-        $check=shell_exec("sudo adb devices | grep ".$this->getConfiguration('ip')." | cut -f2 | xargs");
+        $sudo = exec("\$EUID");
+        if ($sudo != "0") {
+          $sudo_prefix="sudo ";
+        }
+        $check=shell_exec($sudo_prefix."adb devices | grep ".$this->getConfiguration('ip_address')." | cut -f2 | xargs");
       	echo $check;
         if(strstr($check, "offline"))
             throw new Exception("Votre appareil est détecté 'offline' par ADB.", 1);
@@ -563,28 +589,32 @@ class AndroidRemoteControlCmd extends cmd {
 
         $eqLogic->checkAndroidRemoteControlStatus();
 
+        $sudo = exec("\$EUID");
+        if ($sudo != "0") {
+          $sudo_prefix="sudo ";
+        }
         if ($this->getLogicalId() == 'power_set') {
-            shell_exec("sudo adb shell input keyevent 26");
+            shell_exec($sudo_prefix."adb shell input keyevent 26");
         } elseif ($this->getLogicalId() == 'home') {
-            shell_exec("sudo adb shell input keyevent 3");
+            shell_exec($sudo_prefix."adb shell input keyevent 3");
         } elseif ($this->getLogicalId() == 'play') {
-            shell_exec("sudo adb shell input keyevent KEYCODE_BUTTON_MEDIA_PLAY_PAUSE");
+            shell_exec($sudo_prefix."adb shell input keyevent KEYCODE_BUTTON_MEDIA_PLAY_PAUSE");
         } elseif ($this->getLogicalId() == 'up') {
-            shell_exec("sudo adb shell input keyevent 19");
+            shell_exec($sudo_prefix."adb shell input keyevent 19");
         } elseif ($this->getLogicalId() == 'down') {
-            shell_exec("sudo adb shell input keyevent 20");
+            shell_exec($sudo_prefix."adb shell input keyevent 20");
         } elseif ($this->getLogicalId() == 'left') {
-            shell_exec("sudo adb shell input keyevent 21");
+            shell_exec($sudo_prefix."adb shell input keyevent 21");
         } elseif ($this->getLogicalId() == 'right') {
-            shell_exec("sudo adb shell input keyevent 22");
+            shell_exec($sudo_prefix."adb shell input keyevent 22");
         } elseif ($this->getLogicalId() == 'back') {
-            shell_exec("sudo adb shell input keyevent KEYCODE_BACK");
+            shell_exec($sudo_prefix."adb shell input keyevent KEYCODE_BACK");
         } elseif ($this->getLogicalId() == 'enter') {
-            shell_exec("sudo adb shell input keyevent KEYCODE_ENTER");
+            shell_exec($sudo_prefix."adb shell input keyevent KEYCODE_ENTER");
         } elseif ($this->getLogicalId() == 'volume+') {
-            shell_exec("sudo adb shell input keyevent 24");
+            shell_exec($sudo_prefix."adb shell input keyevent 24");
         } elseif ($this->getLogicalId() == 'volume-') {
-            shell_exec("sudo adb shell input keyevent 25");
+            shell_exec($sudo_prefix."adb shell input keyevent 25");
         }
 
         $eqLogic->updateInfo();
