@@ -115,9 +115,6 @@ class AndroidRemoteControl extends eqLogic {
         $sudo_prefix="sudo ";
       if ($sudo != "0") {
       }
-      if (substr(shell_exec("sudo adb shell 'pm list packages -f' | sed -e 's/.*=//' |grep rja"),0 , -1) != "com.rja.utility") {
-        shell_exec($sudo_prefix."adb install /var/www/html/plugins/AndroidRemoteControl/3rdparty/ShowToastMessage_NoDrawerIcon.apk");
-      }
       if ($this->getIsEnable()) {
   			$cmd = '/bin/bash ' .dirname(__FILE__) . '/../../3rdparty/create.sh ' . $this->getConfiguration('name') . ' ' . $this->getConfiguration('ip_address');
   			$cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_create') . ' 2>&1 &';
@@ -535,7 +532,7 @@ class AndroidRemoteControl extends eqLogic {
         if ($sudo != "0") {
           $sudo_prefix="sudo ";
         }
-        $power_state=substr(shell_exec($sudo_prefix."adb shell dumpsys power -h | grep \"Display Power\" | cut -c22-"),0 , -1);
+        $power_state=substr(shell_exec($sudo_prefix."adb shell dumpsys window displays | grep init | cut -c45-53"),0 , -1);
         $encours=substr(shell_exec($sudo_prefix."adb shell dumpsys window windows | grep -E 'mFocusedApp'| cut -d / -f 1 | cut -d \" \" -f 7"), 0, -1);
       	$version=substr(shell_exec($sudo_prefix."adb shell getprop ro.build.version.release"), 0, -1);
         $name=substr(shell_exec($sudo_prefix."adb shell getprop ro.product.model"), 0, -1);
