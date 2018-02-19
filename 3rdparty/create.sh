@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ $EUID -ne 0 ]]; then
   sudo_prefix=sudo;
-fi;
+fi
 cd "$(dirname "$0")"
 echo "############################################################################"
 echo "# Create/Update arc-service-$1 for this device"
@@ -11,7 +11,7 @@ if [ -f /etc/init.d/arc-service-$1 ]; then
     $sudo_prefix service arc-service-$1 stop
     $sudo_prefix update-rc.d -f arc-service-$1 remove
     $sudo_prefix rm -Rf /etc/init.d/arc-service-$1
-fi;
+fi
 $sudo_prefix cp arc-service /etc/init.d/arc-service-$1
 
 $sudo_prefix sed -i "s|\@\@name\@\@|$1|g" /etc/init.d/arc-service-$1

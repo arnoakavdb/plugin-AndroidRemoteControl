@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ $EUID -ne 0 ]]; then
   sudo_prefix=sudo;
-fi;
+fi
 echo "########### Reset ##########"
 echo Arrêt des services en cours :
 echo `ls /etc/init.d/arc-service-*`
@@ -15,6 +15,6 @@ echo en sauvegardant les configurations que vous souhaitez relancer parmi :
 echo `ls /etc/init.d/arc-service-*`
 for services in /etc/init.d/arc-service-*; do
   $sudo_prefix $services start
-done;
+done
 
 echo "########### Fin ##########"

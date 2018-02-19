@@ -2,7 +2,7 @@
 touch /tmp/AndroidRemoteControl_dep
 if [[ $EUID -ne 0 ]]; then
   sudo_prefix=sudo;
-fi;
+fi
 echo 0 > /tmp/AndroidRemoteControl_dep
 echo "############################################################################"
 echo "# Installation in progress"

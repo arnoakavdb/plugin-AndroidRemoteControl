@@ -3,7 +3,7 @@ cd "$(dirname "$0")"
 
 if [[ $EUID -ne 0 ]]; then
   sudo_prefix=sudo;
-fi;
+fi
 echo "############################################################################"
 echo "# Remove arc-service-$1 for this device"
 echo "############################################################################"
@@ -16,7 +16,7 @@ if [ -f /etc/init.d/arc-service-$1 ]; then
     $sudo_prefix update-rc.d arc-service-$1 remove
     $sudo_prefix systemctl daemon-reload
     $sudo_prefix rm -Rf /etc/init.d/arc-service-$1
-fi;
+fi
 echo "############################################################################"
 echo "# Remove arc-service-$1 finnished"
 echo "############################################################################"
