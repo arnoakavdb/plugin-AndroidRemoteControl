@@ -389,9 +389,71 @@ class AndroidRemoteControl extends eqLogic {
         $cmd->setDisplay('icon','<img src=plugins/AndroidRemoteControl/desktop/images/youtube.png height="15" width="15">');
         $cmd->setEqLogic_id($this->getId());
         $cmd->save();
-
-        $infos = $this->getInfo();
-        $this->updateInfo();
+        $cmd = $this->getCmd(null, 'molotov');
+        if (!is_object($cmd)) {
+            $cmd = new AndroidRemoteControlCmd();
+            $cmd->setLogicalId('molotov');
+            $cmd->setOrder(22);
+            $cmd->setIsVisible(1);
+            $cmd->setName(__('molotov', __FILE__));
+        }
+        $cmd->setType('action');
+        $cmd->setSubType('other');
+        $cmd->setDisplay('icon','<img src=plugins/AndroidRemoteControl/desktop/images/molotov.png height="15" width="15">');
+        $cmd->setEqLogic_id($this->getId());
+        $cmd->save();
+        $cmd = $this->getCmd(null, 'plex');
+        if (!is_object($cmd)) {
+            $cmd = new AndroidRemoteControlCmd();
+            $cmd->setLogicalId('plex');
+            $cmd->setOrder(23);
+            $cmd->setIsVisible(1);
+            $cmd->setName(__('plex', __FILE__));
+        }
+        $cmd->setType('action');
+        $cmd->setSubType('other');
+        $cmd->setDisplay('icon','<img src=plugins/AndroidRemoteControl/desktop/images/plex.png height="15" width="15">');
+        $cmd->setEqLogic_id($this->getId());
+        $cmd->save();
+        $cmd = $this->getCmd(null, 'kodi');
+        if (!is_object($cmd)) {
+            $cmd = new AndroidRemoteControlCmd();
+            $cmd->setLogicalId('kodi');
+            $cmd->setOrder(24);
+            $cmd->setIsVisible(1);
+            $cmd->setName(__('kodi', __FILE__));
+        }
+        $cmd->setType('action');
+        $cmd->setSubType('other');
+        $cmd->setDisplay('icon','<img src=plugins/AndroidRemoteControl/desktop/images/kodi.png height="15" width="15">');
+        $cmd->setEqLogic_id($this->getId());
+        $cmd->save();
+        $cmd = $this->getCmd(null, 'netflix');
+        if (!is_object($cmd)) {
+            $cmd = new AndroidRemoteControlCmd();
+            $cmd->setLogicalId('netflix');
+            $cmd->setOrder(25);
+            $cmd->setIsVisible(1);
+            $cmd->setName(__('netflix', __FILE__));
+        }
+        $cmd->setType('action');
+        $cmd->setSubType('other');
+        $cmd->setDisplay('icon','<img src=plugins/AndroidRemoteControl/desktop/images/netflix.png height="15" width="15">');
+        $cmd->setEqLogic_id($this->getId());
+        $cmd->save();
+      	$cmd = $this->getCmd(null, 'toast');
+        if (!is_object($cmd)) {
+            $cmd = new AndroidRemoteControlCmd();
+            $cmd->setLogicalId('toast');
+            $cmd->setOrder(40);
+            $cmd->setIsVisible(1);
+            $cmd->setName(__('toast', __FILE__));
+        }
+        $cmd->setType('action');
+        $cmd->setSubType('message');
+      	$cmd->setDisplay('title_disable', 1);
+        $cmd->setEqLogic_id($this->getId());
+        $cmd->save();
     }
 
     public function preUpdate() {
@@ -601,12 +663,23 @@ class AndroidRemoteControlCmd extends cmd {
         } elseif ($this->getLogicalId() == 'volume+') {
             shell_exec($sudo_prefix."adb shell input keyevent 24");
         } elseif ($this->getLogicalId() == 'volume-') {
-            shell_exec("sudo adb shell input keyevent 25");
+            shell_exec($sudo_prefix."adb shell input keyevent 25");
+        } elseif ($this->getLogicalId() == 'netflix') {
+            shell_exec($sudo_prefix."adb shell am start com.netflix.ninja/.MainActivity");
+        } elseif ($this->getLogicalId() == 'youtube') {
+            shell_exec($sudo_prefix."adb shell monkey -p com.google.android.youtube.tv -c android.intent.category.LAUNCHER 1");
+        } elseif ($this->getLogicalId() == 'plex') {
+            shell_exec($sudo_prefix."adb shell monkey -p com.plexapp.android -c android.intent.category.LAUNCHER 1");
+        } elseif ($this->getLogicalId() == 'kodi') {
+            shell_exec($sudo_prefix."adb shell monkey -p org.xbmc.kodi -c android.intent.category.LAUNCHER 1");
+        } elseif ($this->getLogicalId() == 'molotov') {
+            shell_exec($sudo_prefix."adb shell am start tv.molotov.app/tv.molotov.android.tv.SplashActivity");
+        } elseif ($this->getLogicalId() == 'spotify') {
+            shell_exec($sudo_prefix."adb shell monkey -p com.plexapp.android -c android.intent.category.LAUNCHER 1");
+        } elseif ($this->getLogicalId() == 'toast') {
+            shell_exec($sudo_prefix."adb shell am start -a android.intent.action.MAIN -e message " . $_options['message'] . " -n com.rja.utility/.ShowToast");
         }
 
         $eqLogic->updateInfo();
     }
-
-
-
 }

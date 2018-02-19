@@ -105,12 +105,13 @@ foreach (object::all() as $object) {
 				 			<textarea class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="commentaire" ></textarea>
 				 		</div>
 				 	</div>
-				 	<div class="form-group">
-				 	 <label class="col-sm-3 control-label" >{{Activer}}</label>
-				 	 <div class="col-sm-9">
-				 		<input type="checkbox" class="eqLogicAttr" data-l1key="isEnable" checked/>
-				 	</div>
-				</div>
+					<div class="form-group">
+						<label class="col-md-4 control-label"></label>
+						<div class="col-md-8">
+							<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isEnable" checked/>{{Activer}}</label>
+							<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" checked/>{{Visible}}</label>
+						</div>
+					</div>
 
 				          </fieldset>
 				          <div class="col-sm-6">

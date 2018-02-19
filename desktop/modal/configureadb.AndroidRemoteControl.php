@@ -59,7 +59,7 @@ if (!isConnect('admin')) {
 	          <h3>{{Identifer l'adresse IP de votre périphérique Android via Câble Ethernet ou Wifi}}</h3>
 						<div class="form-group">
 							<center><label class="control-label">{{Allez dans "Menu", cliquez ou appuyer sur "Status"}}</label></center>
-							<center><img src="plugins/AndroidRemoteControl/doc/images/IP_status_setp1.png" width="90%" /></center>
+							<center><img src="plugins/AndroidRemoteControl/docs/images/IP_status_setp1.png" width="90%" /></center>
 							<br/>
 							<input id="ip_address_found" type="text" required="required" class="form-control" placeholder="192.168.1.XXX" />
 						</div>
@@ -73,7 +73,7 @@ if (!isConnect('admin')) {
 	          <h3>{{Activer le mode Développeur}}</h3>
 						<div class="form-group">
 							<center><label class="control-label">{{Aller dans le menu "About" - Cliquez ou appuyer plusieurs fois sur "Build"}}</label></center>
-							<center><img src="plugins/AndroidRemoteControl/doc/images/About_Build_step2.png" height="360" width="843" /></center>
+							<center><img src="plugins/AndroidRemoteControl/docs/images/About_Build_step2.png" height="360" width="843" /></center>
 						</div>
 						<button id="toStep3" class="btn btn-primary nextBtn btn-lg pull-right" type="button" >{{Suivant}}</button>
 	        </div>
@@ -85,7 +85,7 @@ if (!isConnect('admin')) {
 	          <h3>{{Activer le mode Debug}}</h3>
 						<div class="form-group">
 							<center><label class="control-label">{{Aller dans le menu "System - Cliquez ou appuyer sur "Developer options"}}</label></center>
-							<center><img src="plugins/AndroidRemoteControl/doc/images/Developer_Options_step3.png" height="360" width="843" /></center>
+							<center><img src="plugins/AndroidRemoteControl/docs/images/Developer_Options_step3.png" height="360" width="843" /></center>
 						</div>
 	          <button id="toStep4" class="btn btn-primary nextBtn btn-lg pull-right" type="button" >{{Suivant}}</button>
 	        </div>
@@ -97,7 +97,7 @@ if (!isConnect('admin')) {
 	          <h3>{{Activer le mode Debug}}</h3>
 						<div class="form-group">
 							<center><label class="control-label">{{Cliquez ou appuyer sur "USB debugging"}}</label></center>
-							<center><img src="plugins/AndroidRemoteControl/doc/images/USB_Debugging_step4.png" height="360" width="843" /></center>
+							<center><img src="plugins/AndroidRemoteControl/docs/images/USB_Debugging_step4.png" height="360" width="843" /></center>
 						</div>
 	          <button id="toStep5" class="btn btn-primary nextBtn btn-lg pull-right" type="button" >{{Suivant}}</button>
 	        </div>
@@ -139,7 +139,7 @@ if (!isConnect('admin')) {
 	          <h3>{{Enregistrer la connexion}}</h3>
 						<div class="form-group">
 							<center><label class="control-label">{{Cliquez ou appuyer sur "Always allow from this computer" puis sur "OK"}}</label></center>
-							<center><img src="plugins/AndroidRemoteControl/doc/images/Allow_stepFinal.png" height="360" width="843" /></center>
+							<center><img src="plugins/AndroidRemoteControl/docs/images/Allow_stepFinal.png" height="360" width="843" /></center>
 						</div>
 	          <button id="closeConfigureAdb" class="btn btn-primary nextBtn btn-lg pull-right ui-icon-closethick" type="button" >{{Terminer}}</button>
 	        </div>
