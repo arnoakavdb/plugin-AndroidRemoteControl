@@ -2,5 +2,5 @@
 
 if [[ $EUID -ne 0 ]]; then
   sudo_prefix=sudo;
-fi
+fi;
 $sudo_prefix adb $1
