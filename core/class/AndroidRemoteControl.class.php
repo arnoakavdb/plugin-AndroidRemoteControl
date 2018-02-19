@@ -537,7 +537,7 @@ class AndroidRemoteControl extends eqLogic {
       	$version=substr(shell_exec($sudo_prefix."adb shell getprop ro.build.version.release"), 0, -1);
         $name=substr(shell_exec($sudo_prefix."adb shell getprop ro.product.model"), 0, -1);
         $type=substr(shell_exec($sudo_prefix."adb shell getprop ro.build.characteristics"), 0, -1);
-        $resolution=substr(shell_exec($sudo_prefix."sudo adb shell dumpsys window displays | grep init | cut -c45-53"), 0, -1);
+        $resolution=substr(shell_exec($sudo_prefix."adb shell dumpsys window displays | grep init | cut -c45-53"), 0, -1);
 
         return array('power_state' => $power_state, 'encours' => $encours, 'version' => $version, 'name' => $name, 'type' => $type, 'resolution' => $resolution);
     }
