@@ -558,12 +558,12 @@ class AndroidRemoteControl extends eqLogic
         if ($sudo != "0") {
             $sudo_prefix = "sudo ";
         }
-        $power_state = substr(shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell dumpsys power -h | grep \"Display Power\" | cut -c22-"), 0, -1);
-        $encours     = substr(shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell dumpsys window windows | grep -E 'mFocusedApp'| cut -d / -f 1 | cut -d \" \" -f 7"), 0, -1);
-        $version     = substr(shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell getprop ro.build.version.release"), 0, -1);
-        $name        = substr(shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell getprop ro.product.model"), 0, -1);
-        $type        = substr(shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell getprop ro.build.characteristics"), 0, -1);
-        $resolution  = substr(shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell dumpsys window displays | grep init | cut -c45-53"), 0, -1);
+        $power_state = substr(shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell dumpsys power -h | grep \"Display Power\" | cut -c22-"), 0, -1);
+        $encours     = substr(shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell dumpsys window windows | grep -E 'mFocusedApp'| cut -d / -f 1 | cut -d \" \" -f 7"), 0, -1);
+        $version     = substr(shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell getprop ro.build.version.release"), 0, -1);
+        $name        = substr(shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell getprop ro.product.model"), 0, -1);
+        $type        = substr(shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell getprop ro.build.characteristics"), 0, -1);
+        $resolution  = substr(shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell dumpsys window displays | grep init | cut -c45-53"), 0, -1);
 
         return array('power_state' => $power_state, 'encours' => $encours, 'version' => $version, 'name' => $name, 'type' => $type, 'resolution' => $resolution);
     }
@@ -671,41 +671,41 @@ class AndroidRemoteControlCmd extends cmd
             $sudo_prefix = "sudo ";
         }
         if ($this->getLogicalId() == 'power_set') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell input keyevent 26");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell input keyevent 26");
         } elseif ($this->getLogicalId() == 'home') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell input keyevent 3");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell input keyevent 3");
         } elseif ($this->getLogicalId() == 'play') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell input keyevent KEYCODE_BUTTON_MEDIA_PLAY_PAUSE");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell input keyevent KEYCODE_BUTTON_MEDIA_PLAY_PAUSE");
         } elseif ($this->getLogicalId() == 'up') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell input keyevent 19");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell input keyevent 19");
         } elseif ($this->getLogicalId() == 'down') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell input keyevent 20");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell input keyevent 20");
         } elseif ($this->getLogicalId() == 'left') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell input keyevent 21");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell input keyevent 21");
         } elseif ($this->getLogicalId() == 'right') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell input keyevent 22");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell input keyevent 22");
         } elseif ($this->getLogicalId() == 'back') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell input keyevent KEYCODE_BACK");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell input keyevent KEYCODE_BACK");
         } elseif ($this->getLogicalId() == 'enter') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell input keyevent KEYCODE_ENTER");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell input keyevent KEYCODE_ENTER");
         } elseif ($this->getLogicalId() == 'volume+') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell input keyevent 24");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell input keyevent 24");
         } elseif ($this->getLogicalId() == 'volume-') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell input keyevent 25");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell input keyevent 25");
         } elseif ($this->getLogicalId() == 'netflix') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell am start com.netflix.ninja/.MainActivity");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell am start com.netflix.ninja/.MainActivity");
         } elseif ($this->getLogicalId() == 'youtube') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell monkey -p com.google.android.youtube.tv -c android.intent.category.LAUNCHER 1");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell monkey -p com.google.android.youtube.tv -c android.intent.category.LAUNCHER 1");
         } elseif ($this->getLogicalId() == 'plex') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell monkey -p com.plexapp.android -c android.intent.category.LAUNCHER 1");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell monkey -p com.plexapp.android -c android.intent.category.LAUNCHER 1");
         } elseif ($this->getLogicalId() == 'kodi') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell monkey -p org.xbmc.kodi -c android.intent.category.LAUNCHER 1");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell monkey -p org.xbmc.kodi -c android.intent.category.LAUNCHER 1");
         } elseif ($this->getLogicalId() == 'molotov') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell am start tv.molotov.app/tv.molotov.android.tv.SplashActivity");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell am start tv.molotov.app/tv.molotov.android.tv.SplashActivity");
         } elseif ($this->getLogicalId() == 'spotify') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell monkey -p com.plexapp.android -c android.intent.category.LAUNCHER 1");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell monkey -p com.plexapp.android -c android.intent.category.LAUNCHER 1");
         } elseif ($this->getLogicalId() == 'toast') {
-            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') . shell am start -a android.intent.action.MAIN -e message " . $_options['message'] . " -n com.rja.utility/.ShowToast");
+            shell_exec($sudo_prefix . "adb -s . $this->getConfiguration('ip_address') .:5555 shell am start -a android.intent.action.MAIN -e message " . $_options['message'] . " -n com.rja.utility/.ShowToast");
         }
 
         $eqLogic->updateInfo();
