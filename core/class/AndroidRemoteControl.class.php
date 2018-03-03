@@ -1,20 +1,20 @@
 <?php
 
 /* This file is part of Jeedom.
- *
- * Jeedom is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Jeedom is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
- */
+*
+* Jeedom is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* Jeedom is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /* * ***************************Includes********************************* */
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
@@ -456,170 +456,171 @@ class AndroidRemoteControl extends eqLogic
         $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/netflix.png height="15" width="15">');
         $cmd->setEqLogic_id($this->getId());
         $cmd->save();
-        $cmd = $this->getCmd(null, 'toast');
+
+        /*$cmd = $this->getCmd(null, 'toast');
         if (!is_object($cmd)) {
-            $cmd = new AndroidRemoteControlCmd();
-            $cmd->setLogicalId('toast');
-            $cmd->setOrder(40);
-            $cmd->setIsVisible(1);
-            $cmd->setName(__('toast', __FILE__));
-        }
-        $cmd->setType('action');
-        $cmd->setSubType('message');
-        $cmd->setDisplay('title_disable', 1);
-        $cmd->setEqLogic_id($this->getId());
-        $cmd->save();
+        $cmd = new AndroidRemoteControlCmd();
+        $cmd->setLogicalId('toast');
+        $cmd->setOrder(40);
+        $cmd->setIsVisible(1);
+        $cmd->setName(__('toast', __FILE__));
     }
+    $cmd->setType('action');
+    $cmd->setSubType('message');
+    $cmd->setDisplay('title_disable', 1);
+    $cmd->setEqLogic_id($this->getId());
+    $cmd->save();*/
+}
 
-    public function preUpdate()
-    {
-        if ($this->getConfiguration('ip_address') == '') {
-            throw new Exception(__('L\'adresse IP doit être renseignée', __FILE__));
-        }
-        if ($this->getConfiguration('name') === '') {
-            throw new Exception(__('Le champs Nom ne peut être vide', __FILE__));
-        }
-        // Si la chaîne contient des caractères spéciaux
-        if (!preg_match("#[a-zA-Z0-9_-]$#", $this->getConfiguration('name'))) {
-            throw new Exception(__('Le champs Nom ne peut contenir de caractères spéciaux', __FILE__));
-        }
-        // Si la chaîne contient des caractères spéciaux
-        if (preg_match("/\\s/", $this->getConfiguration('name'))) {
-            throw new Exception(__('Le champs Nom ne peut contenir d\'espaces', __FILE__));
-        }
+public function preUpdate()
+{
+    if ($this->getConfiguration('ip_address') == '') {
+        throw new Exception(__('L\'adresse IP doit être renseignée', __FILE__));
     }
-
-    public function postUpdate()
-    {
-
+    if ($this->getConfiguration('name') === '') {
+        throw new Exception(__('Le champs Nom ne peut être vide', __FILE__));
     }
+    // Si la chaîne contient des caractères spéciaux
+    if (!preg_match("#[a-zA-Z0-9_-]$#", $this->getConfiguration('name'))) {
+        throw new Exception(__('Le champs Nom ne peut contenir de caractères spéciaux', __FILE__));
+    }
+    // Si la chaîne contient des caractères spéciaux
+    if (preg_match("/\\s/", $this->getConfiguration('name'))) {
+        throw new Exception(__('Le champs Nom ne peut contenir d\'espaces', __FILE__));
+    }
+}
 
-    public function preRemove()
-    {
+public function postUpdate()
+{
 
+}
+
+public function preRemove()
+{
+
+    $sudo = exec("\$EUID");
+    if ($sudo != "0") {
+        $sudo_prefix = "sudo ";
+    }
+    $cmd = '/bin/bash ' . dirname(__FILE__) . '/../../3rdparty/delete.sh ' . $this->getConfiguration('name');
+    $cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &';
+    exec('echo Delete Service Name : ' . $this->getConfiguration('name') . ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &');
+    exec($sudo_prefix . $cmd);
+}
+
+public function postRemove()
+{
+
+}
+
+/*
+* Non obligatoire mais permet de modifier l'affichage du widget si vous en avez besoin
+public function toHtml($_version = 'dashboard') {
+
+}
+*/
+
+/*
+* Non obligatoire mais ca permet de déclancher une action après modification de variable de configuration
+public static function postConfig_<Variable>() {
+}
+*/
+
+/*
+* Non obligatoire mais ca permet de déclancher une action avant modification de variable de configuration
+public static function preConfig_<Variable>() {
+}
+*/
+
+public function getInformations()
+{
+
+    foreach ($this->getCmd() as $cmd) {
+        $ip   = $this->getConfiguration('ip_address');
+        $name = $this->getConfiguration('name');
         $sudo = exec("\$EUID");
         if ($sudo != "0") {
             $sudo_prefix = "sudo ";
         }
-        $cmd = '/bin/bash ' . dirname(__FILE__) . '/../../3rdparty/delete.sh ' . $this->getConfiguration('name');
-        $cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &';
-        exec('echo Delete Service Name : ' . $this->getConfiguration('name') . ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &');
-        exec($sudo_prefix . $cmd);
+        $state = exec($sudo_prefix . "/etc/init.d/AndroidRemoteControl-service-$name status");
+        $cmd->event($state);
+    }
+    if (is_object($state)) {
+        return $state;
+    } else {
+        return '';
+    }
+}
+
+public function getInfo()
+{
+    $this->checkAndroidRemoteControlStatus();
+    $sudo = exec("\$EUID");
+    if ($sudo != "0") {
+        $sudo_prefix = "sudo ";
+    }
+    $ip_address = $this->getConfiguration('ip_address');
+
+    $power_state = substr(shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell dumpsys power -h | grep \"Display Power\" | cut -c22-"), 0, -1);
+    $encours     = substr(shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell dumpsys window windows | grep -E 'mFocusedApp'| cut -d / -f 1 | cut -d \" \" -f 7"), 0, -1);
+    $version     = substr(shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell getprop ro.build.version.release"), 0, -1);
+    $name        = substr(shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell getprop ro.product.model"), 0, -1);
+    $type        = substr(shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell getprop ro.build.characteristics"), 0, -1);
+    $resolution  = substr(shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell dumpsys window displays | grep init | cut -c45-53"), 0, -1);
+
+    return array('power_state' => $power_state, 'encours' => $encours, 'version' => $version, 'name' => $name, 'type' => $type, 'resolution' => $resolution);
+}
+
+public function updateInfo()
+{
+    try {
+        $infos = $this->getInfo();
+    } catch (Exception $e) {
+        return;
     }
 
-    public function postRemove()
-    {
-
+    if (!is_array($infos)) {
+        return;
     }
 
-    /*
-     * Non obligatoire mais permet de modifier l'affichage du widget si vous en avez besoin
-      public function toHtml($_version = 'dashboard') {
-
-      }
-     */
-
-    /*
-     * Non obligatoire mais ca permet de déclancher une action après modification de variable de configuration
-      public static function postConfig_<Variable>() {
-      }
-     */
-
-    /*
-     * Non obligatoire mais ca permet de déclancher une action avant modification de variable de configuration
-      public static function preConfig_<Variable>() {
-      }
-     */
-
-    public function getInformations()
-    {
-
-        foreach ($this->getCmd() as $cmd) {
-            $ip   = $this->getConfiguration('ip_address');
-            $name = $this->getConfiguration('name');
-            $sudo = exec("\$EUID");
-            if ($sudo != "0") {
-                $sudo_prefix = "sudo ";
-            }
-            $state = exec($sudo_prefix . "/etc/init.d/AndroidRemoteControl-service-$name status");
-            $cmd->event($state);
-        }
-        if (is_object($state)) {
-            return $state;
-        } else {
-            return '';
-        }
+    if (isset($infos['power_state'])) {
+        $this->checkAndUpdateCmd('power_state', ($infos['power_state'] == "ON") ? 1 : 0 );
     }
-
-    public function getInfo()
-    {
-        $this->checkAndroidRemoteControlStatus();
-        $sudo = exec("\$EUID");
-        if ($sudo != "0") {
-            $sudo_prefix = "sudo ";
-        }
-        $ip_address = $this->getConfiguration('ip_address');
-
-        $power_state = substr(shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell dumpsys power -h | grep \"Display Power\" | cut -c22-"), 0, -1);
-        $encours     = substr(shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell dumpsys window windows | grep -E 'mFocusedApp'| cut -d / -f 1 | cut -d \" \" -f 7"), 0, -1);
-        $version     = substr(shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell getprop ro.build.version.release"), 0, -1);
-        $name        = substr(shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell getprop ro.product.model"), 0, -1);
-        $type        = substr(shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell getprop ro.build.characteristics"), 0, -1);
-        $resolution  = substr(shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell dumpsys window displays | grep init | cut -c45-53"), 0, -1);
-
-        return array('power_state' => $power_state, 'encours' => $encours, 'version' => $version, 'name' => $name, 'type' => $type, 'resolution' => $resolution);
-    }
-
-    public function updateInfo()
-    {
-        try {
-            $infos = $this->getInfo();
-        } catch (Exception $e) {
-            return;
-        }
-
-        if (!is_array($infos)) {
-            return;
-        }
-
-        if (isset($infos['power_state'])) {
-            $this->checkAndUpdateCmd('power_state', ($infos['power_state'] == "ON") ? 1 : 0 );
-        }
-        if (isset($infos['encours'])) {
-            $cmd = $this->getCmd(null, 'encours');
-            switch ($infos['encours']) {
-                case "com.netflix.ninja":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/netflix.png height="80" width="80">');
-                    break;
-                case "tv.molotov.app":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/molotov.png height="80" width="80">');
-                    break;
-                case "com.google.android.youtube.tv":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/youtube.png height="80" width="80">');
-                    break;
-                case "com.google.android.leanbacklauncher":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/home.png height="80" width="80">');
-                    break;
-                case "org.xbmc.kodi":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/kodi.png height="80" width="80">');
-                    break;
-                case "com.amazon.amazonvideo.livingroom.nvidia":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/amazonvideo.png height="80" width="80">');
-                    break;
-                case "org.videolan.vlc":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/vlc.png height="80" width="80">');
-                    break;
-                case "com.vevo":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/vevo.jpg height="80" width="80">');
-                    break;
-                case "com.plexapp.android":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/plex.png height="80" width="80">');
-                    break;
-                case "com.spotify.tv.android":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/spotify.png height="80" width="80">');
-                    break;
+    if (isset($infos['encours'])) {
+        $cmd = $this->getCmd(null, 'encours');
+        switch ($infos['encours']) {
+            case "com.netflix.ninja":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/netflix.png height="80" width="80">');
+            break;
+            case "tv.molotov.app":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/molotov.png height="80" width="80">');
+            break;
+            case "com.google.android.youtube.tv":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/youtube.png height="80" width="80">');
+            break;
+            case "com.google.android.leanbacklauncher":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/home.png height="80" width="80">');
+            break;
+            case "org.xbmc.kodi":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/kodi.png height="80" width="80">');
+            break;
+            case "com.amazon.amazonvideo.livingroom.nvidia":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/amazonvideo.png height="80" width="80">');
+            break;
+            case "org.videolan.vlc":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/vlc.png height="80" width="80">');
+            break;
+            case "com.vevo":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/vevo.jpg height="80" width="80">');
+            break;
+            case "com.plexapp.android":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/plex.png height="80" width="80">');
+            break;
+            case "com.spotify.tv.android":
+                $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/spotify.png height="80" width="80">');
+                break;
                 default:
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/inconnu.png height="80" width="80">');
+                $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/inconnu.png height="80" width="80">');
             }
             $cmd->save();
         }
@@ -650,8 +651,9 @@ class AndroidRemoteControl extends eqLogic
         $check = shell_exec($sudo_prefix . "adb devices | grep " . $ip_address . " | cut -f2 | xargs");
         echo $check;
         if (strstr($check, "offline"))
-            throw new Exception("Votre appareil est détecté 'offline' par ADB.", 1);
+        throw new Exception("Votre appareil est détecté 'offline' par ADB.", 1);
         elseif (!strstr($check, "device")) {
+            $this->connectAndroidRemoteControl($ip_address);
             throw new Exception("Votre appareil n'est pas détecté par ADB.", 1);
         } elseif (strstr($check, "unauthorized")) {
             throw new Exception("Vous n'etes pas autorisé a vous connecter a cet appareil.", 1);
@@ -662,11 +664,10 @@ class AndroidRemoteControl extends eqLogic
 
 class AndroidRemoteControlCmd extends cmd
 {
-
     public function execute($_options = array())
     {
         $ARC = $this->getEqLogic();
-				$ARC->checkAndroidRemoteControlStatus();
+        $ARC->checkAndroidRemoteControlStatus();
 
         $sudo = exec("\$EUID");
         if ($sudo != "0") {
@@ -708,8 +709,8 @@ class AndroidRemoteControlCmd extends cmd
             shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell am start tv.molotov.app/tv.molotov.android.tv.SplashActivity");
         } elseif ($this->getLogicalId() == 'spotify') {
             shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell monkey -p com.plexapp.android -c android.intent.category.LAUNCHER 1");
-        } elseif ($this->getLogicalId() == 'toast') {
-            shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell am start -a android.intent.action.MAIN -e message " . $_options['message'] . " -n com.rja.utility/.ShowToast");
+            //} elseif ($this->getLogicalId() == 'toast') {
+            //shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell am start -a android.intent.action.MAIN -e message " . $_options['message'] . " -n com.rja.utility/.ShowToast");
         }
 
         $ARC->updateInfo();
