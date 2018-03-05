@@ -26,30 +26,29 @@ try {
 
     //ajax::init();
     if (init('action') == 'updateAndroidRemoteControl') {
-      AndroidRemoteControl::updateAndroidRemoteControl();
+        AndroidRemoteControl::updateAndroidRemoteControl();
         ajax::success();
     }
 
     if (init('action') == 'resetAndroidRemoteControl') {
-      AndroidRemoteControl::resetAndroidRemoteControl();
+        AndroidRemoteControl::resetAndroidRemoteControl();
         ajax::success();
     }
 
     if (init('action') == 'statusAndroidRemoteControl') {
-      AndroidRemoteControl::statusAndroidRemoteControl(init('serviceName'));
+        AndroidRemoteControl::statusAndroidRemoteControl(init('serviceName'));
         ajax::success();
     }
     if (init('action') == 'connectAndroidRemoteControl') {
-      AndroidRemoteControl::connectAndroidRemoteControl(init('ip_address'));
+        AndroidRemoteControl::connectAndroidRemoteControl(init('ip_address'));
         ajax::success();
     }
     if (init('action') == 'disconnectAndroidRemoteControl') {
-      AndroidRemoteControl::disconnectAndroidRemoteControl(init('ip_address'));
+        AndroidRemoteControl::disconnectAndroidRemoteControl(init('ip_address'));
         ajax::success();
     }
 
     throw new \Exception(__('Aucune méthode correspondante à : ', __FILE__) . init('action'));
-    /*     * *********Catch exeption*************** */
 } catch (\Exception $e) {
     ajax::error(displayExeption($e), $e->getCode());
 }
