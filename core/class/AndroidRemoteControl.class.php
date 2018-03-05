@@ -132,10 +132,10 @@ class AndroidRemoteControl extends eqLogic
         $sudo        = exec("\$EUID");
         $sudo_prefix = "sudo ";
         if ($sudo != "0") {
-            
+
         }
         if ($this->getIsEnable()) {
-            $cmd = '/bin/bash ' . dirname(__FILE__) . '/../../3rdparty/create.sh ' . $this->getConfiguration('name') . ' ' . $this->getConfiguration('ip_address');
+            $cmd = '/bin/bash ' . dirname(__FILE__) . '/../../3rdparty/create.sh ' . $this->getConfiguration('name') . ' ' . $this->getConfiguration('ip_address') . ' 60';
             $cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_create') . ' 2>&1 &';
             exec('echo Create/Update Service Name : ' . $this->getConfiguration('name') . ' IP : ' . $this->getConfiguration('ip_address') . ' >> ' . log::getPathToLog('AndroidRemoteControl_create') . ' 2>&1 &');
             exec($sudo_prefix . $cmd);
@@ -634,7 +634,7 @@ class AndroidRemoteControl extends eqLogic
         if (isset($infos['type'])) {
             $this->checkAndUpdateCmd('type', $infos['type']);
         }
-        if (isset($infos['name'])) {
+        if (isset($infos['resolution'])) {
             $this->checkAndUpdateCmd('resolution', $infos['resolution']);
         }
 

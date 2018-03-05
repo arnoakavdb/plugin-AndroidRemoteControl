@@ -16,6 +16,7 @@ $sudo_prefix cp arc-service /etc/init.d/arc-service-$1
 
 $sudo_prefix sed -i "s|\@\@name\@\@|$1|g" /etc/init.d/arc-service-$1
 $sudo_prefix sed -i "s|\@\@address\@\@|$2|g" /etc/init.d/arc-service-$1
+$sudo_prefix sed -i "s|\@\@timeout\@\@|$3|g" /etc/init.d/arc-service-$1
 $sudo_prefix chmod +x /etc/init.d/arc-service-$1
 $sudo_prefix update-rc.d arc-service-$1 defaults
 $sudo_prefix systemctl daemon-reload

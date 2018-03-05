@@ -13,7 +13,7 @@
 case "$1" in
     start)
 	          echo "Starting AndroidRemoteControl Daemon for @@name@@..."
-            adb connect @@address@@
+            sh /usr/sbin/adbkeepconnection.sh @@address@@ @@timeout@@
             echo $! > /run/ar-@@name@@.pid
             ;;
     stop)

@@ -20,6 +20,7 @@ echo "##########################################################################
 echo "# Remove all plugin configuration files"
 echo "############################################################################"
 $sudo_prefix rm -Rf /etc/init.d/arc-service-*
+$sudo_prefix rm -Rf /usr/sbin/adbkeepconnection.sh
 
 $sudo_prefix rm -Rf /tmp/AndroidRemoteControl_dep
 
