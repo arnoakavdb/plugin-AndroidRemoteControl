@@ -170,6 +170,7 @@ class AndroidRemoteControl extends eqLogic
         $cmd->setTemplate('dashboard', 'encours');
         $cmd->setSubType('string');
         $cmd->setEqLogic_id($this->getId());
+        $cmd->toHtml('dashboard');
         $cmd->setDisplay('title_disable', 1);
         $cmd->save();
 
@@ -622,37 +623,38 @@ public function updateInfo()
         $cmd = $this->getCmd(null, 'encours');
         switch ($infos['encours']) {
             case "com.netflix.ninja":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/netflix.png height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/netflix.png" ');
             break;
             case "tv.molotov.app":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/molotov.png height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/molotov.png" ');
+            $cmd->toHtml('dashboard');
             break;
             case "com.google.android.youtube.tv":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/youtube.png height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/youtube.png" ');
             break;
             case "com.google.android.leanbacklauncher":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/home.png height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/home.png" ');
             break;
             case "org.xbmc.kodi":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/kodi.png height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/kodi.png" ');
             break;
             case "com.amazon.amazonvideo.livingroom.nvidia":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/amazonvideo.png height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/amazonvideo.png" ');
             break;
             case "org.videolan.vlc":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/vlc.png height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/vlc.png" ');
             break;
             case "com.vevo":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/vevo.jpg height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/vevo.jpg" ');
             break;
             case "com.plexapp.android":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/plex.png height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/plex.png" ');
             break;
             case "com.spotify.tv.android":
-                $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/spotify.png height="80" width="80">');
+                $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/spotify.png" ');
                 break;
                 default:
-                $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/inconnu.png height="80" width="80">');
+                $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/inconnu.png" ');
             }
             $cmd->save();
         }
@@ -693,31 +695,34 @@ public function updateInfo()
     }
 
     public function toHtml($_version = 'dashboard') {
-       $replace = $this->preToHtml($_version);
-       if (!is_array($replace)) {
-           return $replace;
-       }
-       $version = jeedom::versionAlias($_version);
-       if ($this->getDisplay('hideOn' . $version) == 1) {
-           return '';
-       }
+        $replace = $this->preToHtml($_version);
+        if (!is_array($replace)) {
+            return $replace;
+        }
+        $version = jeedom::versionAlias($_version);
+        if ($this->getDisplay('hideOn' . $version) == 1) {
+            return '';
+        }
 
-               foreach ($this->getCmd('info') as $cmd) {
-           $replace['#' . $cmd->getLogicalId() . '_history#'] = '';
-           $replace['#' . $cmd->getLogicalId() . '_id#'] = $cmd->getId();
-           $replace['#' . $cmd->getLogicalId() . '#'] = $cmd->execCmd();
-           $replace['#' . $cmd->getLogicalId() . '_collect#'] = $cmd->getCollectDate();
-           if ($cmd->getIsHistorized() == 1) {
-               $replace['#' . $cmd->getLogicalId() . '_history#'] = 'history cursor';
-           }
-       }
+        foreach ($this->getCmd('info') as $cmd) {
+            $replace['#' . $cmd->getLogicalId() . '_history#'] = '';
+            $replace['#' . $cmd->getLogicalId() . '_id#'] = $cmd->getId();
+            $replace['#' . $cmd->getLogicalId() . '#'] = $cmd->execCmd();
+            $replace['#' . $cmd->getLogicalId() . '_collect#'] = $cmd->getCollectDate();
+            if ($cmd->getLogicalId() == 'encours'){
+                $replace['#thumbnail#'] = $cmd->getDisplay('icon');
+            }
+            if ($cmd->getIsHistorized() == 1) {
+                $replace['#' . $cmd->getLogicalId() . '_history#'] = 'history cursor';
+            }
+        }
 
-    foreach ($this->getCmd('action') as $cmd) {
-           $replace['#' . $cmd->getLogicalId() . '_id#'] = $cmd->getId();
-       }
+        foreach ($this->getCmd('action') as $cmd) {
+            $replace['#' . $cmd->getLogicalId() . '_id#'] = $cmd->getId();
+        }
 
-    return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'AndroidRemoteControl', 'AndroidRemoteControl')));
-  }
+        return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'AndroidRemoteControl', 'AndroidRemoteControl')));
+    }
 
 }
 
@@ -775,7 +780,7 @@ class AndroidRemoteControlCmd extends cmd
         }
 
         //}elseif ($this->getLogicalId() == 'toast') {
-            //shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell am start -a android.intent.action.MAIN -e message " . $_options['message'] . " -n com.rja.utility/.ShowToast");
+        //shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell am start -a android.intent.action.MAIN -e message " . $_options['message'] . " -n com.rja.utility/.ShowToast");
         //}
 
         $ARC->updateInfo();
