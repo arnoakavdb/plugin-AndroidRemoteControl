@@ -17,6 +17,7 @@
  */
 
 /* * ***************************Includes********************************* */
+
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 
 class AndroidRemoteControl extends eqLogic
@@ -27,6 +28,14 @@ class AndroidRemoteControl extends eqLogic
         foreach (eqLogic::byType('AndroidRemoteControl', true) as $eqLogic) {
             $eqLogic->updateInfo();
         }
+    }
+
+    private static function usingSudo(){
+        $sudo = exec("\$EUID");
+        if ($sudo != "0") {
+            $sudo_prefix = "sudo ";
+        }
+        return $sudo_prefix;
     }
 
     public static function dependancy_info()
@@ -110,10 +119,8 @@ class AndroidRemoteControl extends eqLogic
     {
         if (!$this->getConfiguration('lastName') == '') {
             if ($this->getConfiguration('name') !== $this->getConfiguration('lastName')) {
-                $sudo = exec("\$EUID");
-                if ($sudo != "0") {
-                    $sudo_prefix = "sudo ";
-                }
+                $sudo_prefix = self::usingSudo();
+
                 exec('echo Remove Service Name : ' . $this->getConfiguration('lastName') . ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &');
                 $cmd = '/bin/bash ' . dirname(__FILE__) . '/../../3rdparty/delete.sh ' . $this->getConfiguration('lastName');
                 $cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &';
@@ -129,11 +136,8 @@ class AndroidRemoteControl extends eqLogic
     public function postSave()
     {
 
-        $sudo        = exec("\$EUID");
-        $sudo_prefix = "sudo ";
-        if ($sudo != "0") {
+        $sudo_prefix = self::usingSudo();
 
-        }
         if ($this->getIsEnable()) {
             $cmd = '/bin/bash ' . dirname(__FILE__) . '/../../3rdparty/create.sh ' . $this->getConfiguration('name') . ' ' . $this->getConfiguration('ip_address') . ' 60';
             $cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_create') . ' 2>&1 &';
@@ -498,10 +502,7 @@ class AndroidRemoteControl extends eqLogic
 
     public function preRemove()
     {
-        $sudo = exec("\$EUID");
-        if ($sudo != "0") {
-            $sudo_prefix = "sudo ";
-        }
+        $sudo_prefix = self::usingSudo();
         $cmd = '/bin/bash ' . dirname(__FILE__) . '/../../3rdparty/delete.sh ' . $this->getConfiguration('name');
         $cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &';
         exec('echo Delete Service Name : ' . $this->getConfiguration('name') . ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &');
@@ -538,10 +539,7 @@ class AndroidRemoteControl extends eqLogic
         foreach ($this->getCmd() as $cmd) {
             $ip   = $this->getConfiguration('ip_address');
             $name = $this->getConfiguration('name');
-            $sudo = exec("\$EUID");
-            if ($sudo != "0") {
-                $sudo_prefix = "sudo ";
-            }
+            $sudo_prefix = self::usingSudo();
             $state = exec($sudo_prefix . "/etc/init.d/AndroidRemoteControl-service-$name status");
             $cmd->event($state);
         }
@@ -555,10 +553,7 @@ class AndroidRemoteControl extends eqLogic
     public function getInfo()
     {
         $this->checkAndroidRemoteControlStatus();
-        $sudo = exec("\$EUID");
-        if ($sudo != "0") {
-            $sudo_prefix = "sudo ";
-        }
+        $sudo_prefix = self::usingSudo();
         $ip_address = $this->getConfiguration('ip_address');
 
         $power_state = substr(shell_exec($sudo_prefix . "adb -s " . $ip_address . ":5555 shell dumpsys power -h | grep \"Display Power\" | cut -c22-"), 0, -1);
@@ -643,10 +638,7 @@ class AndroidRemoteControl extends eqLogic
 
     public function checkAndroidRemoteControlStatus()
     {
-        $sudo = exec("\$EUID");
-        if ($sudo != "0") {
-            $sudo_prefix = "sudo ";
-        }
+        $sudo_prefix = self::usingSudo();
         $ip_address = $this->getConfiguration('ip_address');
         $check      = shell_exec($sudo_prefix . "adb devices | grep " . $ip_address . " | cut -f2 | xargs");
         echo $check;
@@ -670,10 +662,7 @@ class AndroidRemoteControlCmd extends cmd
         $arc = $this->getEqLogic();
         $arc->checkAndroidRemoteControlStatus();
 
-        $sudo = exec("\$EUID");
-        if ($sudo != "0") {
-            $sudoPrefix = "sudo ";
-        }
+        $sudo_prefix = self::usingSudo();
         $ipAddress = $arc->getConfiguration('ip_address');
         log::add('AndroidRemoteControl', 'info', 'Command sent to android device at ip address : ' . $ipAddress);
         if ($this->getLogicalId() == 'power_set') {
