@@ -1,5 +1,4 @@
 #!/bin/bash
-
 ### BEGIN INIT INFO
 # Provides: arc-service-@@name@@
 # Required-Start: $local_fs $syslog $remote_fs
@@ -9,7 +8,6 @@
 # Short-Description: Daemon for @@name@@
 # Description: Connect to an android device
 ### END INIT INFO
-
 case "$1" in
     start)
 	          echo "Starting AndroidRemoteControl Daemon for @@name@@..."

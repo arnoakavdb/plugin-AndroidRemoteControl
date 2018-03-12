@@ -175,6 +175,7 @@ class AndroidRemoteControl extends eqLogic
         $cmd->setTemplate('dashboard', 'encours');
         $cmd->setSubType('string');
         $cmd->setEqLogic_id($this->getId());
+        $cmd->toHtml('dashboard');
         $cmd->setDisplay('title_disable', 1);
         $cmd->save();
 
@@ -409,6 +410,7 @@ class AndroidRemoteControl extends eqLogic
         $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/youtube.png height="15" width="15">');
         $cmd->setEqLogic_id($this->getId());
         $cmd->save();
+
         $cmd = $this->getCmd(null, 'molotov');
         if (!is_object($cmd)) {
             $cmd = new AndroidRemoteControlCmd();
@@ -422,6 +424,7 @@ class AndroidRemoteControl extends eqLogic
         $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/molotov.png height="15" width="15">');
         $cmd->setEqLogic_id($this->getId());
         $cmd->save();
+
         $cmd = $this->getCmd(null, 'plex');
         if (!is_object($cmd)) {
             $cmd = new AndroidRemoteControlCmd();
@@ -435,6 +438,7 @@ class AndroidRemoteControl extends eqLogic
         $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/plex.png height="15" width="15">');
         $cmd->setEqLogic_id($this->getId());
         $cmd->save();
+
         $cmd = $this->getCmd(null, 'kodi');
         if (!is_object($cmd)) {
             $cmd = new AndroidRemoteControlCmd();
@@ -448,6 +452,7 @@ class AndroidRemoteControl extends eqLogic
         $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/kodi.png height="15" width="15">');
         $cmd->setEqLogic_id($this->getId());
         $cmd->save();
+
         $cmd = $this->getCmd(null, 'netflix');
         if (!is_object($cmd)) {
             $cmd = new AndroidRemoteControlCmd();
@@ -462,19 +467,41 @@ class AndroidRemoteControl extends eqLogic
         $cmd->setEqLogic_id($this->getId());
         $cmd->save();
 
-        /* $cmd = $this->getCmd(null, 'toast');
-          if (!is_object($cmd)) {
-          $cmd = new AndroidRemoteControlCmd();
-          $cmd->setLogicalId('toast');
-          $cmd->setOrder(40);
-          $cmd->setIsVisible(1);
-          $cmd->setName(__('toast', __FILE__));
-          }
-          $cmd->setType('action');
-          $cmd->setSubType('message');
-          $cmd->setDisplay('title_disable', 1);
-          $cmd->setEqLogic_id($this->getId());
-          $cmd->save(); */
+        $cmd = $this->getCmd(null, 'amazonvideo');
+        if (!is_object($cmd)) {
+            $cmd = new AndroidRemoteControlCmd();
+            $cmd->setLogicalId('amazonvideo');
+            $cmd->setOrder(25);
+            $cmd->setIsVisible(1);
+            $cmd->setName(__('amazonvideo', __FILE__));
+        }
+        $cmd->setType('action');
+        $cmd->setSubType('other');
+        $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/amazonvideo.png height="15" width="15">');
+        $cmd->setEqLogic_id($this->getId());
+        $cmd->save();
+
+        $cmd = $this->getCmd(null, 'vevo');
+        if (!is_object($cmd)) {
+            $cmd = new AndroidRemoteControlCmd();
+            $cmd->setLogicalId('vevo');
+            $cmd->setOrder(25);
+            $cmd->setIsVisible(1);
+            $cmd->setName(__('vevo', __FILE__));
+        }
+        $cmd->setType('action');
+        $cmd->setSubType('other');
+        $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/vevo.png height="15" width="15">');
+        $cmd->setEqLogic_id($this->getId());
+        $cmd->save();
+
+        /*$cmd = $this->getCmd(null, 'toast');
+        if (!is_object($cmd)) {
+        $cmd = new AndroidRemoteControlCmd();
+        $cmd->setLogicalId('toast');
+        $cmd->setOrder(40);
+        $cmd->setIsVisible(1);
+        $cmd->setName(__('toast', __FILE__));
     }
 
     public function preUpdate()
@@ -581,37 +608,38 @@ class AndroidRemoteControl extends eqLogic
         $cmd = $this->getCmd(null, 'encours');
         switch ($infos['encours']) {
             case "com.netflix.ninja":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/netflix.png height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/netflix.png" ');
             break;
             case "tv.molotov.app":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/molotov.png height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/molotov.png" ');
+            $cmd->toHtml('dashboard');
             break;
             case "com.google.android.youtube.tv":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/youtube.png height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/youtube.png" ');
             break;
             case "com.google.android.leanbacklauncher":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/home.png height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/home.png" ');
             break;
             case "org.xbmc.kodi":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/kodi.png height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/kodi.png" ');
             break;
             case "com.amazon.amazonvideo.livingroom.nvidia":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/amazonvideo.png height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/amazonvideo.png" ');
             break;
             case "org.videolan.vlc":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/vlc.png height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/vlc.png" ');
             break;
             case "com.vevo":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/vevo.jpg height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/vevo.jpg" ');
             break;
             case "com.plexapp.android":
-            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/plex.png height="80" width="80">');
+            $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/plex.png" ');
             break;
             case "com.spotify.tv.android":
-                $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/spotify.png height="80" width="80">');
+                $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/spotify.png" ');
                 break;
                 default:
-                $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/inconnu.png height="80" width="80">');
+                $cmd->setDisplay('icon', 'plugins/AndroidRemoteControl/desktop/images/inconnu.png" ');
             }
             $cmd->save();
         }
@@ -646,6 +674,36 @@ class AndroidRemoteControl extends eqLogic
         } elseif (strstr($check, "unauthorized")) {
             throw new \Exception("Vous n'etes pas autorisé a vous connecter a cet appareil.", 1);
         }
+    }
+
+    public function toHtml($_version = 'dashboard') {
+        $replace = $this->preToHtml($_version);
+        if (!is_array($replace)) {
+            return $replace;
+        }
+        $version = jeedom::versionAlias($_version);
+        if ($this->getDisplay('hideOn' . $version) == 1) {
+            return '';
+        }
+
+        foreach ($this->getCmd('info') as $cmd) {
+            $replace['#' . $cmd->getLogicalId() . '_history#'] = '';
+            $replace['#' . $cmd->getLogicalId() . '_id#'] = $cmd->getId();
+            $replace['#' . $cmd->getLogicalId() . '#'] = $cmd->execCmd();
+            $replace['#' . $cmd->getLogicalId() . '_collect#'] = $cmd->getCollectDate();
+            if ($cmd->getLogicalId() == 'encours'){
+                $replace['#thumbnail#'] = $cmd->getDisplay('icon');
+            }
+            if ($cmd->getIsHistorized() == 1) {
+                $replace['#' . $cmd->getLogicalId() . '_history#'] = 'history cursor';
+            }
+        }
+
+        foreach ($this->getCmd('action') as $cmd) {
+            $replace['#' . $cmd->getLogicalId() . '_id#'] = $cmd->getId();
+        }
+
+        return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'AndroidRemoteControl', 'AndroidRemoteControl')));
     }
 
 }
@@ -694,9 +752,11 @@ class AndroidRemoteControlCmd extends cmd
         } elseif ($this->getLogicalId() == 'molotov') {
             shell_exec($sudoPrefix . "adb -s " . $ipAddress . ":5555 shell am start tv.molotov.app/tv.molotov.android.tv.SplashActivity");
         } elseif ($this->getLogicalId() == 'spotify') {
-            shell_exec($sudoPrefix . "adb -s " . $ipAddress . ":5555 shell monkey -p com.plexapp.android -c android.intent.category.LAUNCHER 1");
-            //} elseif ($this->getLogicalId() == 'toast') {
-            //shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell am start -a android.intent.action.MAIN -e message " . $_options['message'] . " -n com.rja.utility/.ShowToast");
+            shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell monkey -p com.plexapp.android -c android.intent.category.LAUNCHER 1");
+        } elseif ($this->getLogicalId() == 'amazonvideo') {
+            shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell monkey -p com.amazon.amazonvideo.livingroom.nvidia -c android.intent.category.LAUNCHER 1");
+        } elseif ($this->getLogicalId() == 'vevo') {
+            shell_exec($sudo_prefix . "adb -s ".$ip_address.":5555 shell monkey -p com.vevo -c android.intent.category.LAUNCHER 1");
         }
 
         $arc->updateInfo();
