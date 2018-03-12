@@ -495,13 +495,7 @@ class AndroidRemoteControl extends eqLogic
         $cmd->setEqLogic_id($this->getId());
         $cmd->save();
 
-        /*$cmd = $this->getCmd(null, 'toast');
-        if (!is_object($cmd)) {
-        $cmd = new AndroidRemoteControlCmd();
-        $cmd->setLogicalId('toast');
-        $cmd->setOrder(40);
-        $cmd->setIsVisible(1);
-        $cmd->setName(__('toast', __FILE__));
+
     }
 
     public function preUpdate()
