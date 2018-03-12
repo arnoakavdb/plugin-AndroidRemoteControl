@@ -131,12 +131,6 @@ foreach (object::all() as $object) {
 				                      <input id="ip_address" type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="ip_address"/>
 				                    </div>
 				                  </div>
-				                  <div class="form-group">
-				                    <label class="col-sm-3 control-label">{{Nom du Service}}</label>
-				                    <div class="col-sm-3">
-				                      <input id="service_name" type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="name"/>
-				                    </div>
-				                  </div>
 				                  </fieldset>
 				              </form>
 				          </div>

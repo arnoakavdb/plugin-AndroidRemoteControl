@@ -9,9 +9,10 @@ echo `$sudo_prefix service arc-service-* stop`
 echo `$sudo_prefix service arc-service-* status`
 echo `$sudo_prefix adb kill-server`
 echo `$sudo_prefix rm /tmp/5037`
+echo `$sudo_prefix adb start-server`
 
-echo Pensez à activer à nouveau vos services
-echo en sauvegardant les configurations que vous souhaitez relancer parmi :
+
+echo Redémarrage des services :
 echo `ls /etc/init.d/arc-service-*`
 for services in /etc/init.d/arc-service-*; do
   $sudo_prefix $services start

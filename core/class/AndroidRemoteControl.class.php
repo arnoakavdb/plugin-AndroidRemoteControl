@@ -30,12 +30,19 @@ class AndroidRemoteControl extends eqLogic
         }
     }
 
-    private static function usingSudo(){
+    public static function usingSudo(){
         $sudo = exec("\$EUID");
         if ($sudo != "0") {
             $sudo_prefix = "sudo ";
         }
         return $sudo_prefix;
+    }
+
+    public static function formatForServiceName($string) {
+       $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+       $string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+
+       return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
     }
 
     public static function dependancy_info()
@@ -118,7 +125,7 @@ class AndroidRemoteControl extends eqLogic
     public function preSave()
     {
         if (!$this->getConfiguration('lastName') == '') {
-            if ($this->getConfiguration('name') !== $this->getConfiguration('lastName')) {
+            if (self::formatForServiceName($this->getId()) !== $this->getConfiguration('lastName')) {
                 $sudo_prefix = self::usingSudo();
 
                 exec('echo Remove Service Name : ' . $this->getConfiguration('lastName') . ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &');
@@ -126,11 +133,11 @@ class AndroidRemoteControl extends eqLogic
                 $cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &';
                 exec($sudo_prefix . $cmd);
                 sleep(2);
-                $this->setConfiguration('lastName', $this->getConfiguration('name'));
+                $this->setConfiguration('lastName', self::formatForServiceName($this->getName()));
                 exec('echo Setting Last Service Name : ' . $this->getConfiguration('lastName') . ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &');
             }
         }
-        $this->setConfiguration('serviceName', $this->getConfiguration('name'));
+        $this->setConfiguration('serviceName', self::formatForServiceName($this->getName()));
     }
 
     public function postSave()
@@ -139,12 +146,12 @@ class AndroidRemoteControl extends eqLogic
         $sudo_prefix = self::usingSudo();
 
         if ($this->getIsEnable()) {
-            $cmd = '/bin/bash ' . dirname(__FILE__) . '/../../3rdparty/create.sh ' . $this->getConfiguration('name') . ' ' . $this->getConfiguration('ip_address') . ' 60';
+            $cmd = '/bin/bash ' . dirname(__FILE__) . '/../../3rdparty/create.sh ' . $this->getConfiguration('serviceName') . ' ' . $this->getConfiguration('ip_address') . ' 60';
             $cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_create') . ' 2>&1 &';
-            exec('echo Create/Update Service Name : ' . $this->getConfiguration('name') . ' IP : ' . $this->getConfiguration('ip_address') . ' >> ' . log::getPathToLog('AndroidRemoteControl_create') . ' 2>&1 &');
+            exec('echo Create/Update Service Name : ' . $this->getConfiguration('ServiceName') . ' IP : ' . $this->getConfiguration('ip_address') . ' >> ' . log::getPathToLog('AndroidRemoteControl_create') . ' 2>&1 &');
             exec($sudo_prefix . $cmd);
         } else {
-            $cmd = '/bin/bash ' . dirname(__FILE__) . '/../../3rdparty/stop.sh ' . $this->getConfiguration('name');
+            $cmd = '/bin/bash ' . dirname(__FILE__) . '/../../3rdparty/stop.sh ' . $this->getConfiguration('ServiceName');
             $cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_status') . ' 2>&1 &';
             exec($sudo_prefix . $cmd);
         }
@@ -503,17 +510,17 @@ class AndroidRemoteControl extends eqLogic
         if ($this->getConfiguration('ip_address') == '') {
             throw new \Exception(__('L\'adresse IP doit être renseignée', __FILE__));
         }
-        if ($this->getConfiguration('name') === '') {
-            throw new \Exception(__('Le champs Nom ne peut être vide', __FILE__));
-        }
-        // Si la chaîne contient des caractères spéciaux
-        if (!preg_match("#[a-zA-Z0-9_-]$#", $this->getConfiguration('name'))) {
-            throw new \Exception(__('Le champs Nom ne peut contenir de caractères spéciaux', __FILE__));
-        }
-        // Si la chaîne contient des caractères spéciaux
-        if (preg_match("/\\s/", $this->getConfiguration('name'))) {
-            throw new \Exception(__('Le champs Nom ne peut contenir d\'espaces', __FILE__));
-        }
+        // if ($this->getConfiguration('serviceName') === '') {
+        //     throw new \Exception(__('Le champs Nom ne peut être vide', __FILE__));
+        // }
+        // // Si la chaîne contient des caractères spéciaux
+        // if (!preg_match("#[a-zA-Z0-9_-]$#", $this->getConfiguration('serviceName'))) {
+        //     throw new \Exception(__('Le champs Nom ne peut contenir de caractères spéciaux', __FILE__));
+        // }
+        // // Si la chaîne contient des caractères spéciaux
+        // if (preg_match("/\\s/", $this->getConfiguration('serviceName'))) {
+        //     throw new \Exception(__('Le champs Nom ne peut contenir d\'espaces', __FILE__));
+        // }
     }
 
     /* public function postUpdate()
@@ -524,9 +531,9 @@ class AndroidRemoteControl extends eqLogic
     public function preRemove()
     {
         $sudo_prefix = self::usingSudo();
-        $cmd = '/bin/bash ' . dirname(__FILE__) . '/../../3rdparty/delete.sh ' . $this->getConfiguration('name');
+        $cmd = '/bin/bash ' . dirname(__FILE__) . '/../../3rdparty/delete.sh ' . $this->getConfiguration('serviceName');
         $cmd .= ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &';
-        exec('echo Delete Service Name : ' . $this->getConfiguration('name') . ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &');
+        exec('echo Delete Service Name : ' . $this->getConfiguration('ServiceName') . ' >> ' . log::getPathToLog('AndroidRemoteControl_delete') . ' 2>&1 &');
         exec($sudo_prefix . $cmd);
     }
 
@@ -559,7 +566,7 @@ class AndroidRemoteControl extends eqLogic
 
         foreach ($this->getCmd() as $cmd) {
             $ip   = $this->getConfiguration('ip_address');
-            $name = $this->getConfiguration('name');
+            $name = $this->getConfiguration('serviceName');
             $sudo_prefix = self::usingSudo();
             $state = exec($sudo_prefix . "/etc/init.d/AndroidRemoteControl-service-$name status");
             $cmd->event($state);
@@ -659,7 +666,7 @@ class AndroidRemoteControl extends eqLogic
         $sudo_prefix = self::usingSudo();
         $ip_address = $this->getConfiguration('ip_address');
         $check      = shell_exec($sudo_prefix . "adb devices | grep " . $ip_address . " | cut -f2 | xargs");
-        echo $check;
+        #echo $check;
         if (strstr($check, "offline")) {
             throw new \Exception("Votre appareil est détecté 'offline' par ADB.", 1);
         } elseif (!strstr($check, "device")) {
@@ -710,7 +717,7 @@ class AndroidRemoteControlCmd extends cmd
         $arc = $this->getEqLogic();
         $arc->checkAndroidRemoteControlStatus();
 
-        $sudo_prefix = self::usingSudo();
+        $sudo_prefix = $arc->usingSudo();
         $ipAddress = $arc->getConfiguration('ip_address');
         log::add('AndroidRemoteControl', 'info', 'Command sent to android device at ip address : ' . $ipAddress);
         if ($this->getLogicalId() == 'power_set') {
