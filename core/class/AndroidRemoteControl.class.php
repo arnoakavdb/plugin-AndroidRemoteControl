@@ -574,48 +574,44 @@ class AndroidRemoteControl extends eqLogic
             return;
         }
 
-        if (!is_array($infos)) {
-            return;
-        }
-
-        if (isset($infos['power_state'])) {
-            $this->checkAndUpdateCmd('power_state', ($infos['power_state'] == "ON") ? 1 : 0 );
-        }
-        if (isset($infos['encours'])) {
-            $cmd = $this->getCmd(null, 'encours');
-            switch ($infos['encours']) {
-                case "com.netflix.ninja":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/netflix.png height="80" width="80">');
-                    break;
-                case "tv.molotov.app":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/molotov.png height="80" width="80">');
-                    break;
-                case "com.google.android.youtube.tv":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/youtube.png height="80" width="80">');
-                    break;
-                case "com.google.android.leanbacklauncher":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/home.png height="80" width="80">');
-                    break;
-                case "org.xbmc.kodi":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/kodi.png height="80" width="80">');
-                    break;
-                case "com.amazon.amazonvideo.livingroom.nvidia":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/amazonvideo.png height="80" width="80">');
-                    break;
-                case "org.videolan.vlc":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/vlc.png height="80" width="80">');
-                    break;
-                case "com.vevo":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/vevo.jpg height="80" width="80">');
-                    break;
-                case "com.plexapp.android":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/plex.png height="80" width="80">');
-                    break;
-                case "com.spotify.tv.android":
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/spotify.png height="80" width="80">');
-                    break;
+    if (isset($infos['power_state'])) {
+        $this->checkAndUpdateCmd('power_state', ($infos['power_state'] == "ON") ? 1 : 0 );
+    }
+    if (isset($infos['encours'])) {
+        $cmd = $this->getCmd(null, 'encours');
+        switch ($infos['encours']) {
+            case "com.netflix.ninja":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/netflix.png height="80" width="80">');
+            break;
+            case "tv.molotov.app":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/molotov.png height="80" width="80">');
+            break;
+            case "com.google.android.youtube.tv":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/youtube.png height="80" width="80">');
+            break;
+            case "com.google.android.leanbacklauncher":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/home.png height="80" width="80">');
+            break;
+            case "org.xbmc.kodi":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/kodi.png height="80" width="80">');
+            break;
+            case "com.amazon.amazonvideo.livingroom.nvidia":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/amazonvideo.png height="80" width="80">');
+            break;
+            case "org.videolan.vlc":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/vlc.png height="80" width="80">');
+            break;
+            case "com.vevo":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/vevo.jpg height="80" width="80">');
+            break;
+            case "com.plexapp.android":
+            $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/plex.png height="80" width="80">');
+            break;
+            case "com.spotify.tv.android":
+                $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/spotify.png height="80" width="80">');
+                break;
                 default:
-                    $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/inconnu.png height="80" width="80">');
+                $cmd->setDisplay('icon', '<img src=plugins/AndroidRemoteControl/desktop/images/inconnu.png height="80" width="80">');
             }
             $cmd->save();
         }
